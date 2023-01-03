@@ -742,10 +742,6 @@ function draw() {
         }   
     }
 
-    for(let i=0;i<dataObj.BOs.length;i++){
-        //drawPoint(dataObj.BOs[i].midPoint(), 2, 1, 'red', 'red'); //p2 points
-        drawPoint(dataObj.BOs[i].startPoint, 2, 1, 'yellow', 'yellow'); //p2 points
-    }
     if (dataObj.guideTog) {
         for(let i=0;i<dataObj.LBOs.length;i++){
             drawLine(dataObj.LBOs[i], 2, 'green');
