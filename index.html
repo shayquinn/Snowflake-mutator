@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+	<title>SnowFlake</title>
+	<meta charset="UTF-8" />
+	<!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Sidebar Transitions: Transition effects for off-canvas views" />
+	<meta name="keywords" content="transition, off-canvas, navigation, effect, 3d, css3, smooth" />
+	<meta name="author" content="Codrops" />
+	<link rel="stylesheet" type="text/css" href="css/Reset.css">
+	<link rel="stylesheet" type="text/css" href="css/css.css">
+	<!--<link rel="stylesheet" href="pcss.css"/>-->
+	<style>
+</style>
+</head>
+<body id="body">
+
+
+
+
+<div id="mySidenav" class="sidenav">
+	
+	<a href="javascript:void(0)" id="menuC" class="closebtn">&times;</a>
+
+	<div class="flex-container">
+		<span class="spanClass" id="levelL">Level 3</span>
+		<input id="levelS" class="range" type="range" min="1" max="10" value="3">
+	</div>
+
+
+	<button class="collapsible">Lenghts:</button>
+	<div id="coll1" class="content">
+	</div>
+
+	<button class="collapsible">Size:</button>
+	<div id="coll2" class="content">
+	</div>
+
+	<button class="collapsible">Offset:</button>
+	<div id="coll3" class="content">
+	</div>
+
+	<div class="flex-container">
+		<span class="spanClass" id="VlevelL">Visable Levels 3</span>
+		<input id="VlevelS" class="range" type="range" min="0" max="3" value="3">
+	</div>
+
+	<div class="flex-container">
+		<input id="tb3" type="button" class="button" value="TogGuides false">
+	</div>
+
+	<div class="flex-container">
+		<span class="spanClass" id="cropL">Crop-angle 40</span>
+		<input id="cropS" class="range" type="range" min="20" max="85" value="40">
+	</div>
+
+	<div class="flex-container">
+		<span class="spanClass" id="spaceL">Line-space 5</span>
+		<input id="spaceS" class="range" type="range" min="0" max="40" value="0">
+	</div>
+
+	<div class="flex-container">
+		<span class="spanClass" id="backRL">Backcround Alfa 0.9</span>
+		<input id="backRS" class="range" type="range" min="0" max="100" value="0.9">
+	</div>
+
+
+	<div class="flex-container">
+		<input id="tb1" type="button" class="button" value="TogSingle false">
+	</div>
+
+	<div class="flex-container">
+		<input id="tb2" type="button" class="buttonToggel" value="TogMirror true">
+	</div>
+
+	<div class="flex-container">
+		<input id="tb4" type="button" class="button" value="TogText false">
+	</div>
+
+	<div class="flex-container">
+		<input id="tb5" type="button" class="buttonToggel" value="TogCrop true">
+	</div>
+
+	<div class="flex-container">
+		<input id="tb6" type="button" class="button" value="Random">
+	</div>
+	
+	<div class="flex-container">
+		<input id="Refresh" type="button" class="button" value="Refresh">
+	</div>
+
+	<div class="flex-container">
+		<input id="Save" type="button" class="button" value="Save Image">
+	</div>
+	<div class="flex-container">
+		<input id="SaveJson" type="button" class="button" value="Save Json">
+	</div>
+	<div class="flex-container">
+		<input id="LoadJson" type="button" class="button" value="Load Json">
+		<input type="file" id="my_file" style="display: none;">
+	</div>
+
+
+</div>
+
+<div id="con1">
+	<div id="con2">
+		<span id="menuO" style="font-size:30px;color: #f1f1f1;cursor:pointer">&#9776; MENU</span>
+	</div>
+</div>
+
+	<script type="text/javascript" src="js/Jquery-1-12-0-min.js"></script>
+	<script type="text/javascript" src="js/js.js"></script>
+</body>
+</html>
