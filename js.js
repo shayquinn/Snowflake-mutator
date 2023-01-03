@@ -23,15 +23,6 @@ $(function() {
 
     var idCount;
 
-const img = new Image(); // Create new img element
-img.src = "data:image/gif;base64,R0lGODlhCwALAIAAAAAA3pn/ZiH5BAEAAAEALAAAAAALAAsAAAIUhA+hkcuO4lmNVindo7qyrIXiGBYAOw==";
-
-const backImage1 = new Image();
-backImage1.src = "images/thomas-lardeau-d1NX2iggPok-unsplash.jpg";
-
-//const backImage2 = new Image();
-//backImage2.src = "images/jessica-fadel-SH4GNXNj1RA-unsplash.jpg";
-
 const backImage2 = new Image();
 backImage2.src = "https://images.unsplash.com/photo-1511131341194-24e2eeeebb09?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80";
 
