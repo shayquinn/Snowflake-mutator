@@ -1,5 +1,3 @@
-
-
 /*jshint esversion: 6 */
 
 
@@ -32,9 +30,6 @@ var heightCanvas = screen.height;
 
 var widthCanvasMax = screen.width*8;
 var heightCanvasMax  = screen.height*8;
-
-//var widthCanvasMax = screen.width*8;
-//var heightCanvasMax  = screen.height*8;
 
 var offscreencanvas = document.createElement("CANVAS");
 offscreencanvas.setAttribute("id","offscreencanvas");
@@ -125,7 +120,7 @@ function handleMouseWheel(event) {
 
     // Compute zoom factor.
     const zoom = Math.exp(wheel * zoomIntensity);
-    console.log(zoom);
+   
     // Translate so the visible origin is at the context's origin.
     ctx.translate(originx, originy);
   
@@ -158,7 +153,7 @@ function Collapsible(i, text, inId, spId){
         console.log('Collapsible');
    } 
     switch(text){
-        case "Level ": 
+        case "Length ": 
             dataObj.BOs[i] = new Branch(
                 dataObj.BOs[i].startPoint,
                 Number(document.getElementById(inId).value),
@@ -204,10 +199,10 @@ function populatyeCollapsible(){
         let SPAN = document.createElement("SPAN");
         SPAN.setAttribute("id", "spanl"+(i+1));
         SPAN.setAttribute("class", "spanClass");
-        SPAN.innerHTML = "Level "+(i+1)+":";
+        SPAN.innerHTML = "Length "+(i+1)+":";
         let INPUT = document.createElement("INPUT");
         INPUT.setAttribute("id", "inputl"+(i+1));
-        INPUT.setAttribute("class", "range");
+        INPUT.setAttribute("class", "slider");
         INPUT.setAttribute("type", "range");
         INPUT.setAttribute("min", 5);
         INPUT.setAttribute("max", 400);
@@ -218,7 +213,7 @@ function populatyeCollapsible(){
         coll1.appendChild(DIV);
 
         INPUT.addEventListener('input',(e)=>{
-            Collapsible(i, "Level ", "inputl"+(i+1), "spanl"+(i+1));
+            Collapsible(i, "Length ", "inputl"+(i+1), "spanl"+(i+1));
         });
     }
 
@@ -231,7 +226,7 @@ function populatyeCollapsible(){
         SPAN.innerHTML = "Size "+(i+1)+":";
         let INPUT = document.createElement("INPUT");
         INPUT.setAttribute("id", "inputS"+(i+1));
-        INPUT.setAttribute("class", "range");
+        INPUT.setAttribute("class", "slider");
         INPUT.setAttribute("type", "range");
         INPUT.setAttribute("min", 1);
         INPUT.setAttribute("max", 100);
@@ -255,7 +250,7 @@ function populatyeCollapsible(){
         SPAN.innerHTML = "Offset "+(i+1)+":";
         let INPUT = document.createElement("INPUT");
         INPUT.setAttribute("id", "inputO"+(i+1));
-        INPUT.setAttribute("class", "range");
+        INPUT.setAttribute("class", "slider");
         INPUT.setAttribute("type", "range");
         INPUT.setAttribute("min", 0);
         INPUT.setAttribute("max", 50);
@@ -323,7 +318,7 @@ window.onload = function(){
     var backRL = document.getElementById("backRL");
     backRS.addEventListener('input',(e)=>{
         dataObj.backAfla = backRS.value;
-        backRL.innerHTML = "Backcround Alfa "+ (Number(dataObj.backAfla)/100);
+        backRL.innerHTML = "Backcround Alfa "+ (Number(backRS.value)/100);
         sessionStorageSaveArray();
     });
 
@@ -369,8 +364,31 @@ window.onload = function(){
 
     var tb6 = document.getElementById("tb6");
     tb6.addEventListener('click',(e)=>{
-        console.log('random');
-        randomise();
+        console.log('random all');
+        randomise("all");
+        update();
+        sessionStorageSaveArray();
+    });
+
+    var tb7 = document.getElementById("tb7");
+    tb7.addEventListener('click',(e)=>{
+        console.log('random length');
+        randomise("length");
+        update();
+        sessionStorageSaveArray();
+    });
+
+    var tb8 = document.getElementById("tb8");
+    tb8.addEventListener('click',(e)=>{
+        console.log('random size');
+        randomise("size");
+        update();
+        sessionStorageSaveArray();
+    });
+    var tb9 = document.getElementById("tb9");
+    tb9.addEventListener('click',(e)=>{
+        console.log('random offset');
+        randomise("offset");
         update();
         sessionStorageSaveArray();
     });
@@ -478,10 +496,8 @@ function sessionStorageDecodeArray(){
 
 
         dataObj.Visablelevel = dataObjStr.Visablelevel;
-        console.log(dataObj.Visablelevel);
         VlevelL.innerHTML = "Visable Levels "+ dataObj.Visablelevel;
         VlevelS.value = Number(dataObj.Visablelevel);
-        console.log(dataObj.Visablelevel);
         VlevelS.max = dataObj.level;
    
 
@@ -543,7 +559,7 @@ function init(){
         "LBOs": lbos,
         "level": 3,
         "Visablelevel": 3,
-        "backAfla": 0.9,
+        "backAfla": 90,
         "cropAngel": 40,
         "SpaceLines": 0,
         "singleTog": false,
@@ -594,7 +610,7 @@ function updateCollapsible(init){
                     let ip3 = elist3[i].childNodes[1];
                     let ofs = dataObj.BOs[(count-1)].ofs;
                     if (sp1 !== undefined){
-                        sp1.innerHTML = 'Level '+count+': '+bl;
+                        sp1.innerHTML = 'Length '+count+': '+bl;
                     }
                     if (ip1 !== undefined){
                         ip1.value = bl;
@@ -608,7 +624,7 @@ function updateCollapsible(init){
                     }
 
                     if (sp3 !== undefined){
-                        sp3.innerHTML = 'Offset '+count+': '+offsetNumChange(ofs);
+                        sp3.innerHTML = 'Offset '+count+': '+ofs;
                     }
                     if (ip3 !== undefined){
                         ip3.value = ofs;
@@ -742,6 +758,10 @@ function draw() {
         }   
     }
 
+    for(let i=0;i<dataObj.BOs.length;i++){
+        //drawPoint(dataObj.BOs[i].midPoint(), 2, 1, 'red', 'red'); //p2 points
+        drawPoint(dataObj.BOs[i].startPoint, 2, 1, 'yellow', 'yellow'); //p2 points
+    }
     if (dataObj.guideTog) {
         for(let i=0;i<dataObj.LBOs.length;i++){
             drawLine(dataObj.LBOs[i], 2, 'green');
@@ -808,11 +828,8 @@ function drawHexagonColor(fl){
     osctx.lineWidth = 5;
     let col1 = "rgba(0, 0, 0, 0.5)";
     let col2 = "rgba(255, 255, 255, 0.5)";
-
-
     switch(fl.dir){
-        case 0:
-            
+        case 0:       
             osctx.strokeStyle = col1;
             osctx.beginPath();
             osctx.moveTo(fl.hexagon.points[2].x, fl.hexagon.points[2].y);
@@ -943,8 +960,6 @@ function drawHexagonColor(fl){
     osctx.fill();
     osctx.stroke();
 
-
-
 }//end drawHexagon
  
 
@@ -980,6 +995,8 @@ function Line(p1, p2) {
     this.y1 = p1.y;
     this.x2 = p2.x;
     this.y2 = p2.x;
+    this.startPoint = p1;
+    this.endPoint = p2;
 }//end Line
 
 function Circle(p, r){
@@ -1061,27 +1078,72 @@ function createHexCrystel(s1, s2, h1, h2, dir) {
 }//end createHexCrystel
 
 
-function randomise(){
+function randomise(type){
     //Branch(startPoint, len, size, ofs)
     console.log(dataObj.BOs);
-    dataObj.BOs = [];  
-    dataObj.BOs.push(new Branch(centerP, returnRandom(5, 300), returnRandom(1, 50), 25));
-    for(let i=1;i<dataObj.level;i++){
-        dataObj.BOs.push(
-            new Branch(
-                new Point(dataObj.BOs[i-1].endPoint.x, dataObj.BOs[i-1].endPoint.y),
-                returnRandom(5, 300),
-                returnRandom(1, 50),
-                25
-            )
-        );
+    
+    let BOsTemp = [];
+    if(type === "all"){
+        BOsTemp.push(new Branch(centerP, rd(returnRandom(5, 300)), rd(returnRandom(1, 50)), rd(returnRandom(10, 40))));
+        for(let i=1;i<dataObj.level;i++){
+            BOsTemp.push(
+                new Branch(
+                    new Point(BOsTemp[i-1].endPoint.x, BOsTemp[i-1].endPoint.y),
+                    rd(returnRandom(5, 400)),
+                    rd(returnRandom(1, 100)),
+                    rd(returnRandom(10, 40))
+                )
+            );
+        }
+    }else if(type === "length"){
+        BOsTemp.push(new Branch(centerP, rd(returnRandom(5, 400)), dataObj.BOs[0].size, dataObj.BOs[0].ofs));
+        for(let i=1;i<dataObj.level;i++){
+            BOsTemp.push(
+                new Branch(
+                    new Point(BOsTemp[i-1].endPoint.x, BOsTemp[i-1].endPoint.y),
+                    rd(returnRandom(5, 400)),
+                    dataObj.BOs[i].size,
+                    dataObj.BOs[i].ofs
+                )
+            );
+        }
+    }else if(type === "size"){
+        BOsTemp.push(new Branch(centerP, dataObj.BOs[0].len, rd(returnRandom(1, 100)), dataObj.BOs[0].ofs));
+        for(let i=1;i<dataObj.level;i++){
+            BOsTemp.push(
+                new Branch(
+                    new Point(BOsTemp[i-1].endPoint.x, BOsTemp[i-1].endPoint.y),
+                    dataObj.BOs[i].len,
+                    rd(returnRandom(1, 100)),
+                    dataObj.BOs[i].ofs
+                )
+            );
+        }
+    }else if(type === "offset"){
+        BOsTemp.push(new Branch(centerP, dataObj.BOs[0].len, dataObj.BOs[0].size, rd(returnRandom(10, 40))));
+        for(let i=1;i<dataObj.level;i++){
+            BOsTemp.push(
+                new Branch(
+                    new Point(BOsTemp[i-1].endPoint.x, BOsTemp[i-1].endPoint.y),
+                    dataObj.BOs[i].len,
+                    dataObj.BOs[i].size,
+                    rd(returnRandom(10, 40))
+                )
+            );
+        }
     }
+    dataObj.BOs = BOsTemp;  
     console.log(dataObj.BOs);
 }//end randomise
 
 function returnRandom(low, high){
-    return Math.abs(rd((((Math.random() * (low - high))) + low)));
+    return Math.abs((((Math.random() * (low - high))) + low));
 }//end returnRandom
+
+function rd(num){
+    //Round to One Decimal Place
+    return (Math.round(num * 10) / 10);
+}//end rd
 
 function createBranchlist(){
     if(functionOrder){console.log('createBranchlist');}
@@ -1172,27 +1234,34 @@ function checkFlake(fs, tt, l, f){
     let peakp = f.hexagon.points[0];
 
     let pl = new Line(f.p1, peakp); 
+    //if a branch is to the left of the center line
     if(f.p2.x >= centerP.x){
+        //if a branch hits a guid or crop line
         if(checkLines(pl, dataObj.LBOs, 0)){
             peakLine.push(pl);
             peak.push(subPoint(peakp, cpp));
             check.push(true);
-          
+            //if brance is not a stem or a seed
             if(f.text !== "stem" && f.text !== "seed"){
                 let cl = checkLinesClosest(pl, dataObj.LBOs, 0);
                 closest_intersection.push(cl);
                 let sp = shortLine(subPoint(f.p1, cpp), cl, f.size2);
                 shortPoint.push(sp);
-
+                //if cropping is active
                 if(dataObj.crop){
                     let dist = Math.round(findDistance(cl, sp));
                     let cir = new Circle(sp, dist);
-                    if(!PinC(cir, f.p1)){
-                        let ll = new Line(f.p1, sp);
-                        let ff = new Flake(f.p1, sp, f.level, f.size, f.dir, f.text, f.ofs);
-                        fs.push(ff);
-                        tt.push(ll);
-                    }
+                    //if branch start point is below SpaceLines do not add
+                    console.log(dataObj.LBOs[3]);
+                    if(f.p1.y < dataObj.LBOs[3].startPoint.y){
+                        //if branch start point is in the radus or size do not add
+                        if(!PinC(cir, f.p1)){
+                            let ll = new Line(f.p1, sp);
+                            let ff = new Flake(f.p1, sp, f.level, f.size, f.dir, f.text, f.ofs);
+                            fs.push(ff);
+                            tt.push(ll);
+                        }
+                    }   
                 }else{
                     fs.push(f);
                     tt.push(l);
@@ -1225,7 +1294,7 @@ function offsetNumChange(num){
     }else if(localVal == 25){
         localVal = 0;
     }
-    return localVal;
+    return rd(localVal);
 }//end offsetNumChange
 
 function createFlakes() {
@@ -1410,10 +1479,7 @@ function createOtherSections(num, fs){
 
 //Helper functions  ///////////////////
 
-function rd(num){
-    //Round to One Decimal Place
-    return (Math.round(num * 10) / 10);
-}//end rd
+
 
 function subPoint(p1, p2){
     return new Point(p1.x-p2.x, p1.y-p2.y);
@@ -1559,4 +1625,5 @@ function convert(ang, xy, cxy) {
 }//end convert
 
 });
+
 
