@@ -26,6 +26,8 @@ backImage2.src = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAgEASABIAAD/4RmaRXhpZgA
 
 
 
+
+
 var widthCanvas = screen.width;
 var heightCanvas = screen.height;
 
@@ -53,105 +55,53 @@ var check;
 var peak;
 var peakLine;
 
-//zoom pan mouse functions ///////////////////
-//https://www.cs.colostate.edu/~anderson/newsite/javascript-zoom.html
 
-canvas.addEventListener("mousedown", handleMouseDown, false); // click and hold to pan
-canvas.addEventListener("mousemove", handleMouseMove, false);
-canvas.addEventListener("mouseup", handleMouseUp, false);
-canvas.addEventListener("mousewheel", handleMouseWheel, false); // mousewheel duplicates dblclick function
-//canvas.addEventListener("DOMMouseScroll", handleMouseWheel, false); // for Firefox
+////////////////////////////////
 
+// See blogpost here for more details: https://roblouie.com/article/617
+//https://github.com/roblouie/canvas-pan-and-zoom
+    let isDragging = false;
+    let dragStartPosition = { x: 0, y: 0 };
+    let currentTransformedCursor;
 
-// View parameters
+    canvas.addEventListener('mousedown', onMouseDown);
+    canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseup', onMouseUp);
+    canvas.addEventListener('wheel', onWheel);
 
-var mouseDown = false;
-var lastX = 0;
-var lastY = 0;
-
-const zoomIntensity = 0.2;
-var visibleWidth = widthCanvas;
-var visibleHeight = heightCanvas;
-var zoomScale = 1;
-var originx = 0;
-var originy = 0;
-
-var MouseMovex = 0;
-var MouseMovey = 0;
-
-
-function handleMouseDown(event) {
-    mouseDown = true;
-}//end handleMouseDown
-
-function handleMouseUp(event) {
-    mouseDown = false;
-}//end handleMouseUp
-
-function handleMouseMove(event) {
-   const mousex = event.clientX - canvas.offsetLeft;
-   const mousey = event.clientY - canvas.offsetTop;
-
-    if (mouseDown) {
-        var dx = (mousex - lastX);// / canvas.width * widthView;
-        var dy = (mousey - lastY);// / canvas.height * heightView;
-        MouseMovex += dx;
-        MouseMovey += dy;
+    function getTransformedPoint(x, y) {
+        const originalPoint = new DOMPoint(x, y);
+        return ctx.getTransform().invertSelf().transformPoint(originalPoint);
     }
-    lastX = mousex;
-    lastY = mousey; 
-   
-}//end handleMouseMove
 
-function handleMouseWheel(event) {
-    //https://stackoverflow.com/questions/2916081/zoom-in-on-a-point-using-scale-and-translate
-    event.preventDefault();
-    // Get mouse offset.
-    const mousex = event.clientX - canvas.offsetLeft;
-    const mousey = event.clientY - canvas.offsetTop;
-    
-    // Normalize mouse wheel movement to +1 or -1 to avoid unusual jumps.
-    const wheel = event.deltaY < 0 ? 1 : -1;
+    function onMouseDown(event) {
+        isDragging = true;
+        dragStartPosition = getTransformedPoint(event.offsetX, event.offsetY);
+    }
 
-    // Compute zoom factor.
-    const zoom = Math.exp(wheel * zoomIntensity);
-   
-    // Translate so the visible origin is at the context's origin.
-    ctx.translate(originx, originy);
-  
-    // Compute the new visible origin. Originally the mouse is at a
-    // distance mouse/scale from the corner, we want the point under
-    // the mouse to remain in the same place after the zoom, but this
-    // is at mouse/new_scale away from the corner. Therefore we need to
-    // shift the origin (coordinates of the corner) to account for this.
-    originx -= mousex/(zoomScale*zoom) - mousex/zoomScale;
-    originy -= mousey/(zoomScale*zoom) - mousey/zoomScale;
-    
-    // Scale it (centered around the origin due to the translate above).
-    ctx.scale(zoom, zoom);
-    // Offset the visible origin to it's proper position.
-   
-    ctx.translate(-originx, -originy);
+    function onMouseMove(event) {
+        currentTransformedCursor = getTransformedPoint(event.offsetX, event.offsetY);
+        if (isDragging) {
+            ctx.translate(currentTransformedCursor.x - dragStartPosition.x, currentTransformedCursor.y - dragStartPosition.y);
+            draw();
+        }     
+    } 
 
-    // Update scale and others.
-    zoomScale *= zoom;
-    visibleWidth = widthCanvas / zoomScale;
-    visibleHeight = heightCanvas / zoomScale;
-}//end handleMouseWheel
+    function onMouseUp() {
+        isDragging = false;
+    }
 
-function zoom_to_center(){
-    const mousex = canvas.width/2;
-    const mousey = canvas.height/2;
-    const zoom = 7.5;
-    ctx.translate(originx, originy);
-    originx -= mousex/(zoomScale*zoom) - mousex/zoomScale;
-    originy -= mousey/(zoomScale*zoom) - mousey/zoomScale;
-    ctx.scale(zoom, zoom);
-    ctx.translate(-originx, -originy);
-    zoomScale *= zoom;
-    visibleWidth = widthCanvas / zoomScale;
-    visibleHeight = heightCanvas / zoomScale;
-}//end zoom_to_center
+    function onWheel(event) {
+        const zoom = event.deltaY < 0 ? 1.1 : 0.9;
+        ctx.translate(currentTransformedCursor.x, currentTransformedCursor.y);
+        ctx.scale(zoom, zoom);
+        ctx.translate(-currentTransformedCursor.x, -currentTransformedCursor.y);   
+        event.preventDefault();
+        draw();
+    }
+
+////////////////////////////////
+
 
 //Menu functions ///////////////////
 
@@ -561,7 +511,7 @@ function init(){
         new Line(new Point(19.2, -114.2), new Point(65, -140.6)),
         new Line(new Point(19.2, -151.7), new Point(38.6, -162.9))     
     ];
-       dataObj = {
+    dataObj = {
         "BOs": bos,
         "LBOs": lbos,
         "level": 3,
@@ -573,8 +523,7 @@ function init(){
         "mirrorTog": true,
         "guideTog": false,
         "textTog": false,
-        "crop": true
-        
+        "crop": true    
     };
 
     flakes = [];
@@ -582,7 +531,6 @@ function init(){
     updateCollapsible();
     createFlakes();
     draw();
-    zoom_to_center();
 }//end init
 
 //Update   ///////////////////
@@ -593,6 +541,7 @@ function update(){
     createGuides();
     updateCollapsible();
     createFlakes(); 
+    draw();
     //console.log(flakes);
 }//end update
 
@@ -709,22 +658,13 @@ function copyToOnScreen() {
     ctx.fillStyle = "rgba(0, 0, 0, "+(Number(dataObj.backAfla)/100)+")";
     ctx.fill();
     ctx.restore();
-    
-    //ctx.rotate(10*Math.PI/180);
-    
-    //ctx.drawImage(offscreencanvas, originx, originy, widthCanvas/zoomScale, heightCanvas/zoomScale);
-    let x = 0;
-    let y = 0;
-    let cx = x + 0.5 * widthCanvas;   // x of shape center
-    let cy = y + 0.5 * heightCanvas;  // y of shape center
-   // ctx.translate(cx, cy);              //translate to center of shape
-    //ctx.rotate(10*Math.PI/180);
     ctx.drawImage(offscreencanvas, 0, 0, widthCanvas, heightCanvas);
+    //window.requestAnimationFrame(draw);
 }//end copyToOnScreen
 
 function draw() {
     if(functionOrder){console.log('draw');}
-    // osctx.imageSmoothingEnabled = true;
+    osctx.imageSmoothingEnabled = true;
     //osctx.save();
     //osctx.restore();
     osctx.setTransform(1,0,0,1,0,0);
@@ -776,7 +716,7 @@ function draw() {
         }
     }
 copyToOnScreen();
-window.requestAnimationFrame(draw);
+
 }//end draw
 
 function drawText(point, text, size, font, color){
@@ -1088,8 +1028,6 @@ function createHexCrystel(s1, s2, h1, h2, dir) {
 
 function randomise(type){
     //Branch(startPoint, len, size, ofs)
-    console.log(dataObj.BOs);
-    
     let BOsTemp = [];
     if(type === "all"){
         BOsTemp.push(new Branch(centerP, rd(returnRandom(5, 300)), rd(returnRandom(1, 50)), rd(returnRandom(10, 40))));
@@ -1141,7 +1079,6 @@ function randomise(type){
         }
     }
     dataObj.BOs = BOsTemp;  
-    console.log(dataObj.BOs);
 }//end randomise
 
 function returnRandom(low, high){
@@ -1646,6 +1583,8 @@ function convert(ang, xy, cxy) {
 }//end convert
 
 });
+
+
 
 
 
